@@ -1,8 +1,8 @@
 import requests
 from datetime import datetime
 
-BOT_TOKEN = "PUT_TOKEN_HERE"
-CHAT_ID = "PUT_CHAT_ID_HERE"
+BOT_TOKEN = "8916345954:AAFLOPXI4Yp97RYoZZInQ8SciQ0-EDjgJEA"
+CHAT_ID = "6888066102"
 
 def get_weather():
     # اصفهان (Isfahan) - Open-Meteo API
