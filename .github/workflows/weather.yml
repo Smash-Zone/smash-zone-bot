@@ -1,0 +1,25 @@
+name: Smash Zone Weather Bot
+
+on:
+  schedule:
+    - cron: "30 18 * * *"  # هر روز ساعت 9:00 شب ایران (UTC+3:30)
+  workflow_dispatch:
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install requests
+        run: pip install requests
+
+      - name: Run bot
+        run: python bot.py
