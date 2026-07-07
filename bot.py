@@ -1,13 +1,26 @@
 import requests
-from datetime import datetime
 
-BOT_TOKEN = "8916345954:AAFLOPXI4Yp97RYoZZInQ8SciQ0-EDjgJEA"
+# ==========================
+# تنظیمات
+# ==========================
+BOT_TOKEN = "8916345954:AAFafkj0CbiXga827gET2qSfUry_iAqpeyE"
 CHAT_ID = "-1004226652444"
 
+
 def get_weather():
-    # اصفهان (Isfahan) - Open-Meteo API
-    url = "https://api.open-meteo.com/v1/forecast?latitude=32.6546&longitude=51.6680&hourly=temperature_2m,wind_speed_10m,precipitation_probability,weathercode&forecast_days=1&timezone=auto"
-    data = requests.get(url).json()
+    url = (
+        "https://api.open-meteo.com/v1/forecast"
+        "?latitude=32.6546"
+        "&longitude=51.6680"
+        "&hourly=temperature_2m,wind_speed_10m,precipitation_probability"
+        "&forecast_days=1"
+        "&timezone=auto"
+    )
+
+    response = requests.get(url, timeout=15)
+    response.raise_for_status()
+
+    data = response.json()
 
     temp = data["hourly"]["temperature_2m"][6]
     wind = data["hourly"]["wind_speed_10m"][6]
@@ -30,7 +43,7 @@ def get_weather():
         status = "نامناسب"
         emoji = "❌"
 
-    message = f"""
+    return f"""
 🏸 SMASH ZONE
 
 🌤 وضعیت هوای فردا صبح | ناژوان
@@ -44,7 +57,7 @@ def get_weather():
 🔥 آماده‌ی بازی باشید!
 """
 
-    return message
+
 def send_message(text):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
@@ -52,13 +65,29 @@ def send_message(text):
         url,
         data={
             "chat_id": CHAT_ID,
-            "text": text
-        }
+            "text": text,
+        },
+        timeout=15,
     )
 
+    print("========== DEBUG ==========")
     print("Status:", response.status_code)
     print("Response:", response.text)
+    print("===========================")
+
+    response.raise_for_status()
+
 
 if __name__ == "__main__":
-    msg = get_weather()
-    send_message(msg)
+    print("Bot started...")
+
+    try:
+        message = get_weather()
+        print("Weather received.")
+
+        send_message(message)
+
+        print("Done.")
+    except Exception as e:
+        print("ERROR:")
+        print(e)
