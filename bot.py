@@ -1,13 +1,38 @@
 import requests
+import traceback
+
 
 # ==========================
-# تنظیمات
+# تنظیمات ربات
 # ==========================
+
 BOT_TOKEN = "8916345954:AAFafkj0CbiXga827gET2qSfUry_iAqpeyE"
 CHAT_ID = "-1004226652444"
 
 
+# ==========================
+# تست ارتباط با تلگرام
+# ==========================
+
+def test_bot():
+
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/getMe"
+
+    r = requests.get(url, timeout=15)
+
+    print("=== Telegram Bot Test ===")
+    print("Status:", r.status_code)
+    print("Response:", r.text)
+
+
+# ==========================
+# گرفتن وضعیت هوا
+# ==========================
+
 def get_weather():
+
+    print("Getting weather...")
+
     url = (
         "https://api.open-meteo.com/v1/forecast"
         "?latitude=32.6546"
@@ -17,33 +42,38 @@ def get_weather():
         "&timezone=auto"
     )
 
-    response = requests.get(url, timeout=15)
-    response.raise_for_status()
+    r = requests.get(url, timeout=15)
+    r.raise_for_status()
 
-    data = response.json()
+    data = r.json()
 
     temp = data["hourly"]["temperature_2m"][6]
     wind = data["hourly"]["wind_speed_10m"][6]
     rain = data["hourly"]["precipitation_probability"][6]
 
+
     if wind < 5:
         wind_text = "ساکن"
         status = "عالی"
         emoji = "✅"
+
     elif wind < 15:
         wind_text = "نسیم ملایم"
         status = "مناسب"
         emoji = "👍"
+
     elif wind < 30:
         wind_text = "باد نسبتاً شدید"
         status = "متوسط"
         emoji = "⚠️"
+
     else:
         wind_text = "باد شدید"
         status = "نامناسب"
         emoji = "❌"
 
-    return f"""
+
+    message = f"""
 🏸 SMASH ZONE
 
 🌤 وضعیت هوای فردا صبح | ناژوان
@@ -57,37 +87,59 @@ def get_weather():
 🔥 آماده‌ی بازی باشید!
 """
 
+    return message
+
+
+
+# ==========================
+# ارسال پیام
+# ==========================
 
 def send_message(text):
+
+    print("Sending message...")
+
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
-    response = requests.post(
+
+    r = requests.post(
         url,
         data={
             "chat_id": CHAT_ID,
-            "text": text,
+            "text": text
         },
-        timeout=15,
+        timeout=15
     )
 
-    print("========== DEBUG ==========")
-    print("Status:", response.status_code)
-    print("Response:", response.text)
-    print("===========================")
 
-    response.raise_for_status()
+    print("=== Send Message Result ===")
+    print("Status:", r.status_code)
+    print("Response:", r.text)
 
+
+
+# ==========================
+# شروع برنامه
+# ==========================
 
 if __name__ == "__main__":
-    print("Bot started...")
+
+    print("BOT STARTED")
 
     try:
-        message = get_weather()
-        print("Weather received.")
 
-        send_message(message)
+        test_bot()
 
-        print("Done.")
-    except Exception as e:
-        print("ERROR:")
-        print(e)
+        msg = get_weather()
+
+        print(msg)
+
+        send_message(msg)
+
+        print("FINISHED")
+
+
+    except Exception:
+
+        print("ERROR FOUND")
+        traceback.print_exc()
