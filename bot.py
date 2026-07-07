@@ -1,6 +1,8 @@
 import requests
 import traceback
 
+print("TEST VERSION RUNNING")
+
 
 # ==========================
 # تنظیمات ربات
@@ -11,22 +13,25 @@ CHAT_ID = "-1004226652444"
 
 
 # ==========================
-# تست ارتباط با تلگرام
+# تست خود ربات تلگرام
 # ==========================
 
 def test_bot():
 
+    print("Testing Telegram bot...")
+
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/getMe"
 
-    r = requests.get(url, timeout=15)
+    response = requests.get(url, timeout=15)
 
-    print("=== Telegram Bot Test ===")
-    print("Status:", r.status_code)
-    print("Response:", r.text)
+    print("Telegram test status:")
+    print(response.status_code)
+    print(response.text)
+
 
 
 # ==========================
-# گرفتن وضعیت هوا
+# وضعیت هوا
 # ==========================
 
 def get_weather():
@@ -42,10 +47,11 @@ def get_weather():
         "&timezone=auto"
     )
 
-    r = requests.get(url, timeout=15)
-    r.raise_for_status()
+    response = requests.get(url, timeout=15)
 
-    data = r.json()
+    print("Weather response:", response.status_code)
+
+    data = response.json()
 
     temp = data["hourly"]["temperature_2m"][6]
     wind = data["hourly"]["wind_speed_10m"][6]
@@ -95,31 +101,32 @@ def get_weather():
 # ارسال پیام
 # ==========================
 
-def send_message(text):
+def send_message(message):
 
     print("Sending message...")
 
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
-
-    r = requests.post(
+    response = requests.post(
         url,
         data={
             "chat_id": CHAT_ID,
-            "text": text
+            "text": message
         },
         timeout=15
     )
 
 
-    print("=== Send Message Result ===")
-    print("Status:", r.status_code)
-    print("Response:", r.text)
+    print("Send status:")
+    print(response.status_code)
+
+    print("Telegram response:")
+    print(response.text)
 
 
 
 # ==========================
-# شروع برنامه
+# شروع
 # ==========================
 
 if __name__ == "__main__":
@@ -130,16 +137,16 @@ if __name__ == "__main__":
 
         test_bot()
 
-        msg = get_weather()
+        weather = get_weather()
 
-        print(msg)
+        print(weather)
 
-        send_message(msg)
+        send_message(weather)
 
-        print("FINISHED")
+        print("DONE SUCCESSFULLY")
 
 
     except Exception:
 
-        print("ERROR FOUND")
+        print("ERROR:")
         traceback.print_exc()
