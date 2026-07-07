@@ -45,10 +45,19 @@ def get_weather():
 """
 
     return message
-
 def send_message(text):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    requests.post(url, data={"chat_id": CHAT_ID, "text": text})
+
+    response = requests.post(
+        url,
+        data={
+            "chat_id": CHAT_ID,
+            "text": text
+        }
+    )
+
+    print("Status:", response.status_code)
+    print("Response:", response.text)
 
 if __name__ == "__main__":
     msg = get_weather()
