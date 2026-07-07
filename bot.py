@@ -2,7 +2,7 @@ import requests
 from datetime import datetime
 
 BOT_TOKEN = "8916345954:AAFLOPXI4Yp97RYoZZInQ8SciQ0-EDjgJEA"
-CHAT_ID = "6888066102"
+CHAT_ID = "1004226652444"
 
 def get_weather():
     # اصفهان (Isfahan) - Open-Meteo API
