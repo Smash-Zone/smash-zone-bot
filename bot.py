@@ -4,35 +4,23 @@ import traceback
 print("TEST VERSION RUNNING")
 
 
-# ==========================
-# تنظیمات ربات
-# ==========================
-
 BOT_TOKEN = "8916345954:AAFafkj0CbiXga827gET2qSfUry_iAqpeyE"
 CHAT_ID = "-1004226652444"
 
 
-# ==========================
-# تست خود ربات تلگرام
-# ==========================
+def check_bot():
 
-def test_bot():
-
-    print("Testing Telegram bot...")
+    print("Checking bot...")
 
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/getMe"
 
-    response = requests.get(url, timeout=15)
+    r = requests.get(url, timeout=15)
 
-    print("Telegram test status:")
-    print(response.status_code)
-    print(response.text)
+    print("Bot check:")
+    print(r.status_code)
+    print(r.text)
 
 
-
-# ==========================
-# وضعیت هوا
-# ==========================
 
 def get_weather():
 
@@ -47,11 +35,11 @@ def get_weather():
         "&timezone=auto"
     )
 
-    response = requests.get(url, timeout=15)
+    r = requests.get(url, timeout=15)
 
-    print("Weather response:", response.status_code)
+    print("Weather status:", r.status_code)
 
-    data = response.json()
+    data = r.json()
 
     temp = data["hourly"]["temperature_2m"][6]
     wind = data["hourly"]["wind_speed_10m"][6]
@@ -79,7 +67,7 @@ def get_weather():
         emoji = "❌"
 
 
-    message = f"""
+    return f"""
 🏸 SMASH ZONE
 
 🌤 وضعیت هوای فردا صبح | ناژوان
@@ -93,41 +81,28 @@ def get_weather():
 🔥 آماده‌ی بازی باشید!
 """
 
-    return message
 
 
-
-# ==========================
-# ارسال پیام
-# ==========================
-
-def send_message(message):
+def send_message(text):
 
     print("Sending message...")
 
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
-    response = requests.post(
+    r = requests.post(
         url,
         data={
             "chat_id": CHAT_ID,
-            "text": message
+            "text": text
         },
         timeout=15
     )
 
-
-    print("Send status:")
-    print(response.status_code)
-
-    print("Telegram response:")
-    print(response.text)
+    print("Send result:")
+    print(r.status_code)
+    print(r.text)
 
 
-
-# ==========================
-# شروع
-# ==========================
 
 if __name__ == "__main__":
 
@@ -135,18 +110,18 @@ if __name__ == "__main__":
 
     try:
 
-        test_bot()
+        check_bot()
 
-        weather = get_weather()
+        message = get_weather()
 
-        print(weather)
+        print(message)
 
-        send_message(weather)
+        send_message(message)
 
-        print("DONE SUCCESSFULLY")
-
+        print("FINISHED")
 
     except Exception:
 
-        print("ERROR:")
+        print("ERROR FOUND")
+
         traceback.print_exc()
