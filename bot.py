@@ -1,25 +1,11 @@
 import requests
 import traceback
 
-print("TEST VERSION RUNNING")
+print("HELLO FROM BOT.PY")
 
 
 BOT_TOKEN = "8916345954:AAFafkj0CbiXga827gET2qSfUry_iAqpeyE"
 CHAT_ID = "-1004226652444"
-
-
-def check_bot():
-
-    print("Checking bot...")
-
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/getMe"
-
-    r = requests.get(url, timeout=15)
-
-    print("Bot check:")
-    print(r.status_code)
-    print(r.text)
-
 
 
 def get_weather():
@@ -35,11 +21,10 @@ def get_weather():
         "&timezone=auto"
     )
 
-    r = requests.get(url, timeout=15)
+    response = requests.get(url, timeout=20)
+    print("Weather status:", response.status_code)
 
-    print("Weather status:", r.status_code)
-
-    data = r.json()
+    data = response.json()
 
     temp = data["hourly"]["temperature_2m"][6]
     wind = data["hourly"]["wind_speed_10m"][6]
@@ -67,7 +52,7 @@ def get_weather():
         emoji = "❌"
 
 
-    return f"""
+    message = f"""
 🏸 SMASH ZONE
 
 🌤 وضعیت هوای فردا صبح | ناژوان
@@ -81,26 +66,27 @@ def get_weather():
 🔥 آماده‌ی بازی باشید!
 """
 
+    return message
 
 
-def send_message(text):
+
+def send_message(message):
 
     print("Sending message...")
 
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
-    r = requests.post(
+    response = requests.post(
         url,
         data={
             "chat_id": CHAT_ID,
-            "text": text
+            "text": message
         },
-        timeout=15
+        timeout=20
     )
 
-    print("Send result:")
-    print(r.status_code)
-    print(r.text)
+    print("Telegram status:", response.status_code)
+    print("Telegram response:", response.text)
 
 
 
@@ -109,19 +95,14 @@ if __name__ == "__main__":
     print("BOT STARTED")
 
     try:
+        text = get_weather()
 
-        check_bot()
+        print(text)
 
-        message = get_weather()
+        send_message(text)
 
-        print(message)
-
-        send_message(message)
-
-        print("FINISHED")
+        print("DONE")
 
     except Exception:
-
-        print("ERROR FOUND")
-
+        print("ERROR")
         traceback.print_exc()
